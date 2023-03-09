@@ -2,13 +2,21 @@ import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button, Image } from 'react-native';
 
 export default function AssignItemsScreen({ route, navigation }) {
-  const { groupName, userName, receiptData } = route.params;
-  const [receipt, setReceipt] = useState(null);
+  const { groupName, userName, receipt } = route.params;
 
   return (
     <View style={styles.container}>
       <Text>
-        {receipt}
+        {receipt['subItems']}
+      </Text>
+      <Text>
+        {receipt['subTotal']}
+      </Text>
+      <Text>
+        {receipt['tax']}
+      </Text>
+      <Text>
+        {receipt['total']}
       </Text>
       <Button
         title="Continue"

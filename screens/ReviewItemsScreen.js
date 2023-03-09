@@ -27,7 +27,7 @@ export default function ReviewItemsScreen({ route, navigation }) {
       </Text>
       <Button
         title="Continue"
-        onPress={() => navigation.navigate('AssignItems', { groupName: groupName, userName: userName, receiptData: receipt})}
+        onPress={() => navigation.navigate('AssignItems', { groupName: groupName, userName: userName, receipt: receipt})}
       />
     </View>
   );

@@ -22,7 +22,8 @@
     "react-native-elements": "*",
     "@react-navigation/native": "*",
     "@react-navigation/native-stack": "*",
-    "react-native-safe-area-context": "4.3.1"
+    "react-native-safe-area-context": "4.3.1",
+    "@react-navigation/elements": "*"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

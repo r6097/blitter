@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { StyleSheet, Text, View, Button, Pressable } from 'react-native';
 import { Icon } from 'react-native-elements'
-import StyledButton from '../components/StyledButton';
+import PlainButton from '../components/PlainButton';
 
 import { Camera } from 'expo-camera';
 
@@ -33,7 +33,7 @@ export default function ScanScreen({ route, navigation }) {
           setCameraRef(ref);
         }}
       >
-        <StyledButton
+        <PlainButton
           style={{ backgroundColor: 'blue' }}
           label={"Enter Manually Instead"}
           onPress={takePicture}

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
 
-export default function StyledButton({ label, onPress }) {
+export default function PlainButton({ label, onPress }) {
   return (
     <View>
       <Pressable style={styles.customButton} onPress={onPress}>
@@ -13,6 +13,7 @@ export default function StyledButton({ label, onPress }) {
 const styles = StyleSheet.create({
   customButton: {
     border: "1px solid",
+    backgroundColor: 'white',
     borderRadius: 8,
     padding: 6
   }

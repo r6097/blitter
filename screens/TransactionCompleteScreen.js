@@ -6,7 +6,7 @@ export default function TransactionCompleteScreen({ route, navigation }) {
   return (
     <View style={styles.container}>
       <Text>
-        {receipt}
+        Yass
       </Text>
       <Button
         title="Split Again"

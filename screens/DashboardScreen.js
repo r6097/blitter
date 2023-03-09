@@ -9,11 +9,14 @@ import {
   TouchableOpacity,
   TouchableWithoutFeedback,
   ScrollView,
+  Dimensions,
+  TextInput
 } from 'react-native';
 import { SearchBar } from '@rneui/themed';
 import { SimpleLineIcons } from '@expo/vector-icons';
 import TransactionGroup from '../components/TransactionGroup';
-import StyledButton from '../components/StyledButton';
+import PlainButton from '../components/PlainButton';
+import { useHeaderHeight } from '@react-navigation/elements';
 
 navHomeImage = require('../assets/home.png');
 navProfileImage = require('../assets/user.png');
@@ -21,11 +24,16 @@ navGroupImage = require('../assets/plus.png');
 
 import transactionData from '../transactionData.json'
 import quickBalanceData from '../quickBalanceData.json'
+var headerHeight;
 
 export default function DashboardScreen({ route, navigation }) {
+  headerHeight = useHeaderHeight();
+  console.log(headerHeight);
   const { userName } = route.params;
   const [modalVisible, setModalVisible] = useState(false);
-  const [searchText, setSearchText] = React.useState("");
+  const [popupVisible, setPopupVisible] = useState(false);
+  const [groupCode, setGroupCode] = useState("");
+  const [searchText, setSearchText] = useState("");
   const transactionHistory = fetchTransactionData(transactionData);
   const quickBalanceHistory = fetchQuckBalanceData(quickBalanceData);
   const defaultGroup = "Test"; // for when the user clicks 'join group'
@@ -93,7 +101,7 @@ export default function DashboardScreen({ route, navigation }) {
 
   return (
     <View style={styles.container}>
-      <ScrollView style={{flex: "0 0 60%"}}>
+      <ScrollView style={styles.scrollview}>
         <View style={styles.dashHeader}>
           <SimpleLineIcons
             name="user"
@@ -104,7 +112,8 @@ export default function DashboardScreen({ route, navigation }) {
           <Text style={styles.title}>Hi {userName},</Text>
         </View>
         <View>
-        
+        {
+        /*
         <SearchBar
           platform="default"
           containerStyle={{
@@ -130,7 +139,8 @@ export default function DashboardScreen({ route, navigation }) {
           onCancel={() => console.log(onCancel())}
           value={searchText}
         />
-
+        */
+        }
         </View>
         <View>
           <Text style={styles.subheader}>In the past 30 days,</Text>
@@ -140,45 +150,92 @@ export default function DashboardScreen({ route, navigation }) {
           <Text style={styles.subheader}>Recent Splits</Text>
           <RecentSplits xactiondata={transactionHistory}/>
         </View>
+
         <Modal
           animationType="fade"
           transparent={true}
           visible={modalVisible}
-          onRequestClose={() => {
-            Alert.alert('Modal has been closed.');
-            setModalVisible(!modalVisible);
-          }}>
+        >
+          {/* Covers entire screen*/}
           <TouchableOpacity 
-            style={styles.modalCenteredView}
-            onPressOut={() => {setModalVisible(false)}}
+            style={styles.modalContainer}
+            onPressOut={() => {
+              setModalVisible(false)
+              setPopupVisible(false)
+            }}
           >
+            {/* The modal window */}
             <TouchableWithoutFeedback style={styles.modalView}>
-              <View style={styles.modalButtonGroup}>
-                <StyledButton
+              <View style={styles.modalContent}>
+                <PlainButton
                   label="Create"
                   onPress={() => {
                     setModalVisible(false);
+                    setPopupVisible(false);
                     navigation.navigate('CreateGroup', { userName: userName });
                   }}
                 />
-                <StyledButton
+                <PlainButton
                   label="Join"
                   onPress={() => {
-                    setModalVisible(false);
-                    navigation.navigate('MembersJoin', { userName: userName, groupName: defaultGroup });
+                    setPopupVisible(true);
                   }}
                 />
               </View>
             </TouchableWithoutFeedback>
           </TouchableOpacity>
         </Modal>
+
+        <Modal
+          animationType="fade"
+          transparent={true}
+          visible={modalVisible && popupVisible}
+        >
+          {/* Covers entire screen*/}
+          <TouchableOpacity 
+            style={styles.popupContainer}
+            onPressOut={() => {setPopupVisible(false)}}
+          >
+            {/* The modal window */}
+            <TouchableWithoutFeedback style={styles.modalView}>
+              <View style={styles.popupContent}>
+                <Text>Enter Group Code</Text>
+                <TextInput
+                  style={styles.input}
+                  onChangeText={setGroupCode}
+                  value={groupCode}
+                  placeholder=""
+                />
+                <PlainButton
+                  label="Enter"
+                  onPress={() => {
+                    setModalVisible(false);
+                    setPopupVisible(false);
+                    navigation.navigate('MembersJoin', { userName: userName, groupName: defaultGroup });
+                  }}
+                />
+                <PlainButton
+                  label="Cancel"
+                  onPress={() => {
+                    setPopupVisible(false);
+                  }}
+                />
+              </View>
+            </TouchableWithoutFeedback>
+          </TouchableOpacity>
+        </Modal>
+
+
       </ScrollView>
 
-      <BottomNav style={{flex: "0 0 40%"}}/>
+      <BottomNav />
     </View>
   );
 }
-
+const windowWidth = Dimensions.get('window').width;
+const windowHeight = Dimensions.get('window').height;
+const navBarHeight = 60;
+console.log(windowHeight)
 const styles = StyleSheet.create({
   title: {
     fontSize: 32, 
@@ -188,51 +245,21 @@ const styles = StyleSheet.create({
     fontSize: 24, 
     fontWeight: 500 
   },
-  
+  // is the whole app screen, except for the navigation header
   container: {
+    height: windowHeight - headerHeight,
     flexDirection: 'column',
     backgroundColor: '#fff',
-    justifyContent: 'center',
   },
-
-  dashHeader: {
-    alignSelf: "flex-start",
-    flexDirection: 'row',
-    marginTop: 20,
-    marginLeft: 20
+  // is the scrollable part of the screen, sans bottom navbar
+  scrollview: {
+    height: windowHeight - headerHeight - navBarHeight
   },
-
-  modalCenteredView: {
-    flex: 1,
-    justifyContent: 'flex-end',
-    backgroundColor: 'rgba(0,0,0,0.75)',
-    alignItems: 'center',
-  },
-  modalView: {
-    backgroundColor: 'white',
-    width: '100%',
-    borderRadius: 20,
-    padding: 15,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 4,
-    elevation: 5,
-  },
-  modalButtonGroup: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: '100%',
-  },
-
+  // should stay at the bottom
   navBar: {
     width: '100%',
+    height: navBarHeight,
     backgroundColor: 'white',
-    height: 60,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignSelf: 'flex-start',
@@ -249,4 +276,56 @@ const styles = StyleSheet.create({
     width: 90,
     height: 90,
   },
+
+  // in the scrollview, where recent transactions are
+  dashHeader: {
+    alignSelf: "flex-start",
+    flexDirection: 'row',
+  },
+  // modal styles
+  modalContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.75)',
+    alignItems: 'center',
+  },
+  modalView: {
+    width: '100%',
+    borderRadius: 20,
+    padding: 15,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5,
+  },
+  modalContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+  },
+  popupContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    backgroundColor: 'rgba(0,0,0,0.75)',
+    alignItems: 'center',
+  },
+  popupContent: {
+    flexDirection: 'column',
+    backgroundColor: 'blue',
+    margin: 20,
+  },
+  input: {
+    height: 40,
+    width: 200,
+    margin: 12,
+    borderWidth: 1,
+    borderRadius: 4,
+    padding: 10,
+  },
+  
 });

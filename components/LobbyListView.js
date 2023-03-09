@@ -2,7 +2,6 @@ import * as React from 'react';
 import { Text, View, StyleSheet, Image } from 'react-native';
 
 export default function LobbyListView({ data }) {
-  console.log(data);
   return (
     <View style={styles.container}>
       <Text style={styles.paragraph}>
