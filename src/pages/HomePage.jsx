@@ -1,5 +1,21 @@
 function HomePage() {
-  return <div>Home page</div>;
+  return (
+    <div
+      className="maxHeight column crossCenter"
+      style={{ justifyContent: "center", alignItems: "center" }}
+    >
+      <h1>Blitter</h1>
+      <p>Snap a receipt, or type it in</p>
+      <div className="row" style={{ gap: 20 }}>
+        <button className="iconButton" style={{ fontSize: "3em" }}>
+          📸
+        </button>
+        <button className="iconButton" style={{ fontSize: "3em" }}>
+          📝
+        </button>
+      </div>
+    </div>
+  );
 }
 
 export default HomePage;
