@@ -7,8 +7,9 @@ export const SessionProvider = ({ children }) => {
   const [currentSession, setCurrentSession] = useState({
     date: null,
     screenshot: null,
-    total: 0,
-    split: [],
+    items: [], // itemized reciept
+    users: [], // participating users
+    split: [], // final dues, split by person
   });
 
   // Synchronize session updates to browser disk for persistent data
@@ -28,7 +29,8 @@ export const SessionProvider = ({ children }) => {
     setCurrentSession({
       date: new Date().toISOString(),
       screenshot: null,
-      total: 0,
+      items: [],
+      users: [],
       split: [],
     });
   };
@@ -37,13 +39,6 @@ export const SessionProvider = ({ children }) => {
     setCurrentSession((prev) => ({
       ...prev,
       screenshot: base64String,
-    }));
-  };
-
-  const setTotal = (amount) => {
-    setCurrentSession((prev) => ({
-      ...prev,
-      total: Number(amount),
     }));
   };
 
@@ -77,8 +72,52 @@ export const SessionProvider = ({ children }) => {
     }));
   };
 
+  const addItem = (name, price, people = []) => {
+    setCurrentSession((prev) => ({
+      ...prev,
+      items: [...prev.items, { name, price: Number(price), people }],
+    }));
+  };
+
+  const updateItem = (index, name, price, people) => {
+    setCurrentSession((prev) => ({
+      ...prev,
+      items: prev.items.map((item, i) =>
+        i === index ? { name, price: Number(price), people } : item
+      ),
+    }));
+  };
+
+  const removeItem = (index) => {
+    setCurrentSession((prev) => ({
+      ...prev,
+      items: prev.items.filter((_, i) => i !== index),
+    }));
+  };
+
+  const addUser = (name) => {
+    setCurrentSession((prev) => ({
+      ...prev,
+      users: [...prev.users, name],
+    }));
+  };
+
+  const updateUser = (index, name) => {
+    setCurrentSession((prev) => ({
+      ...prev,
+      users: prev.users.map((prevName, i) => (i === index ? name : prevName)),
+    }));
+  };
+
+  const removeUser = (index) => {
+    setCurrentSession((prev) => ({
+      ...prev,
+      users: prev.users.filter((_, i) => i !== index),
+    }));
+  };
+
   const saveSession = () => {
-    if (currentSession.total > 0 && currentSession.split.length > 0) {
+    if (currentSession.split.length > 0) {
       setSessionHistory((prev) => [currentSession, ...prev]);
       startNewSession();
       return true;
@@ -100,7 +139,12 @@ export const SessionProvider = ({ children }) => {
     sessionHistory,
     startNewSession,
     setScreenshot,
-    setTotal,
+    addItem,
+    updateItem,
+    removeItem,
+    addUser,
+    updateUser,
+    removeUser,
     setSplit,
     addPerson,
     updatePerson,
